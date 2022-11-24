@@ -58,12 +58,60 @@ def diagnostic(pocket, community):
     print(hand_info)
     print("flush", flop_flush(hand_info))
     print("straight", flop_straight(hand_info))
+    print("straight flush", flop_straight_flush(hand_info))
+
 
 def flop_straight_flush(hand_info):
+    possible_straight_flush = []
+    SUITS = ['d','s','h','c']
     if flop_flush(hand_info) and flop_straight(hand_info):
-        print("both")
+        straight_index = -1
+        straight_cards = flop_straight(hand_info)
+        for straight in straight_cards:
+            #print("straight", straight)
+            cards_needed = []
+            sf_card = []
+            straight_index += 1
+            start = straight[0]
+            for card_number in range(start, start+5):
+                if straight_cards[straight_index][1] == None:
+                    for card in hand_info["hand"]:
+                        if card[1] == card_number:
+                            sf_card.append(card)
+                elif not (card_number in straight_cards[straight_index][1]):
+                    for card in hand_info["hand"]:
+                        if card[1] == card_number:
+                            sf_card.append(card)
+            #print(sf_card)
+            suit1 = ''
+            for suit in SUITS:
+                suit_cards = []
+                for card in sf_card:
+                    if suit == card[0]:
+                        suit_cards.append(card)
+                #print(suit_cards, "SC")
+                if len(suit_cards) >= 3:
+                    suit1=suit
+                    #print(suit1)
+                    break
+            nums = []
+            if suit1:
+                for card in suit_cards:
+                    nums.append(card[1])
+                for i in range(start, start+5):
+                        if not (i in nums):
+                            #print(i, nums)
+                            cards_needed.append([suit1, i])
+                straight_flush = [start, cards_needed]
+                possible_straight_flush.append(straight_flush)
+    return possible_straight_flush
 
-print(diagnostic(['c1','h12'], ['s1','s11','s7']))
+
+
+
+
+print(diagnostic(['h3','h12'], ['h1','h4','h5']))
+
 
 '''def is_pattern(pocket,community,status):
     patterns = []
